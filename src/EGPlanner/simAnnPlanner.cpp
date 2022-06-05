@@ -33,7 +33,7 @@
 #include "graspit/debug.h"
 
 //! How many of the best states are buffered. Should be a parameter
-#define BEST_LIST_SIZE 20
+#define BEST_LIST_SIZE 10000
 //! Two states within this distance of each other are considered to be in the same neighborhood
 #define DISTANCE_THRESHOLD 0.3
 
@@ -125,13 +125,14 @@ SimAnnPlanner::mainLoop()
   DBGP("Sim Ann success");
 
   //put result in list if there's room or it's better than the worst solution so far
-  double worstEnergy;
-  if ((int)mBestList.size() < BEST_LIST_SIZE) { worstEnergy = 1.0e5; }
-  else { worstEnergy = mBestList.back()->getEnergy(); }
-  if (result == SimAnn::JUMP && mCurrentState->getEnergy() < worstEnergy) {
+//  double worstEnergy;
+//  if ((int)mBestList.size() < BEST_LIST_SIZE) { worstEnergy = 1.0e5; }
+//  else { worstEnergy = mBestList.back()->getEnergy(); }
+//  if (result == SimAnn::JUMP && mCurrentState->getEnergy() < worstEnergy) {
+    if (result == SimAnn::JUMP) {
     GraspPlanningState *insertState = new GraspPlanningState(mCurrentState);
     //but check if a similar solution is already in there
-    if (!addToListOfUniqueSolutions(insertState, &mBestList, 0.2)) {
+    if (!addToListOfUniqueSolutions(insertState, &mBestList, 0.01)) {
       delete insertState;
     } else {
       mBestList.sort(GraspPlanningState::compareStates);
